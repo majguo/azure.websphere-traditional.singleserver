@@ -23,14 +23,22 @@
                 "description": "Location for all resources."
             }
         },
+        "useTrial": {
+            "type": "bool",
+            "metadata": {
+                "description": "Boolean value indicating, if use wants to deploy a trial version of tWAS single server."
+            }
+        },
         "ibmUserId": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "Username of your IBMid account."
             }
         },
         "ibmUserPwd": {
             "type": "securestring",
+            "defaultValue": "",
             "metadata": {
                 "description": "Password of your IBMid account."
             }
@@ -88,7 +96,7 @@
     },
     "variables": {
         "const_addressPrefix": "10.0.0.0/16",
-        "const_arguments": "[concat(' ',parameters('wasUsername'),' ',parameters('wasPassword'))]",
+        "const_arguments": "[concat(' ', parameters('useTrial'), ' ', parameters('wasUsername'), ' ', parameters('wasPassword'))]",
         "const_dnsLabelPrefix": "[concat(parameters('dnsLabelPrefix'), take(replace(parameters('guidValue'),'-',''),6))]",
         "const_linuxConfiguration": {
             "disablePasswordAuthentication": true,
@@ -134,7 +142,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "${azure.apiVersion}",
-            "name": "${singleserver.start}",
+            "name": "[if(parameters('useTrial'), '${singleserver.trial.start}', '${singleserver.start}')]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -261,10 +269,10 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "${image.publisher}",
-                        "offer": "${twas.image.offer}",
-                        "sku": "${twas.image.sku}",
-                        "version": "${twas.image.version}"
+                        "publisher": "[if(parameters('useTrial'), '${twas.trial.image.publisher}', '${twas.image.publisher}')]",
+                        "offer": "[if(parameters('useTrial'), '${twas.trial.image.offer}', '${twas.image.offer}')]",
+                        "sku": "[if(parameters('useTrial'), '${twas.trial.image.sku}', '${twas.image.sku}')]",
+                        "version": "[if(parameters('useTrial'), '${twas.trial.image.version}', '${twas.image.version}')]"
                     },
                     "osDisk": {
                         "name": "[concat(variables('name_virtualMachine'), '-disk')]",
@@ -279,7 +287,7 @@
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPasswordOrKey')]",
                     "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('const_linuxConfiguration'))]",
-                    "customData": "[base64(concat(parameters('ibmUserId'), ' ', parameters('ibmUserPwd')))]"
+                    "customData": "[base64(if(parameters('useTrial'), '', concat(parameters('ibmUserId'), ' ', parameters('ibmUserPwd'))))]"
                 },
                 "networkProfile": {
                     "networkInterfaces": [
@@ -290,9 +298,9 @@
                 }
             },
             "plan": {
-                "name": "${twas.image.sku}",
-                "publisher": "${image.publisher}",
-                "product": "${twas.image.offer}"
+                "name": "[if(parameters('useTrial'), '${twas.trial.image.sku}', '${twas.image.sku}')]",
+                "publisher": "[if(parameters('useTrial'), '${twas.trial.image.publisher}', '${twas.image.publisher}')]",
+                "product": "[if(parameters('useTrial'), '${twas.trial.image.offer}', '${twas.image.offer}')]"
             }
         },
         {
@@ -338,7 +346,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "${azure.apiVersion}",
-            "name": "${singleserver.end}",
+            "name": "[if(parameters('useTrial'), '${singleserver.trial.end}', '${singleserver.end}')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('name_virtualMachine'), 'install')]"
             ],

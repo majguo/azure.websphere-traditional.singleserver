@@ -19,7 +19,7 @@
 
     <groupId>com.ibm.websphere.azure</groupId>
     <artifactId>azure.websphere-traditional.singleserver</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     
     <parent>
         <groupId>com.microsoft.azure.iaas</groupId>
@@ -39,13 +39,23 @@
         <customer.usage.attribution.id>pid-5d69db5c-7773-47d1-9455-890d05fb3c2b-partnercenter</customer.usage.attribution.id>
         <singleserver.start>0dd3f110-4c7f-5292-a624-954cc19f7c49</singleserver.start>
         <singleserver.end>b82321d6-35d9-5b24-b158-1d32a234bd71</singleserver.end>
+        <singleserver.trial.start>e2691195-adb0-5815-a9c6-5913520bb1e3</singleserver.trial.start>
+        <singleserver.trial.end>247da6d1-3922-55cb-8c0c-22387505fe54</singleserver.trial.end>
         <!-- This is the "Partner ID" in Partner Center" -->
-        <image.publisher>ibm-usa-ny-armonk-hq-6275750-ibmcloud-aiops</image.publisher>
+        <twas.image.publisher>ibm-usa-ny-armonk-hq-6275750-ibmcloud-aiops</twas.image.publisher>
         <!-- This is the twas "Offer ID" of the "Azure Virtual Machine" offer type -->
         <twas.image.offer>2022-01-06-twas-base-single-server</twas.image.offer>
         <!-- This is the twas "Plan ID" of the plan within the "Azure Virtual Machine" offer -->
         <twas.image.sku>2022-01-06-twas-single-server-base-image</twas.image.sku>
         <!-- This is the twas "Disk version" of the VM image of the plan within the "Azure Virtual Machine" offer -->
         <twas.image.version>9.0.20220110</twas.image.version>
+        <!-- This is the "Partner ID" in Partner Center" -->
+        <twas.trial.image.publisher>microsoft_javaeeonazure_test</twas.trial.image.publisher>
+        <!-- This is the twas trial "Offer ID" of the "Azure Virtual Machine" offer type -->
+        <twas.trial.image.offer>2021-zheng-image-offer-preview</twas.trial.image.offer>
+        <!-- This is the twas trial "Plan ID" of the plan within the "Azure Virtual Machine" offer -->
+        <twas.trial.image.sku>2022-zheng-rhel-with-was-base-trial</twas.trial.image.sku>
+        <!-- This is the twas trial "Disk version" of the VM image of the plan within the "Azure Virtual Machine" offer -->
+        <twas.trial.image.version>9.0.20220106</twas.trial.image.version>
     </properties>
 </project>

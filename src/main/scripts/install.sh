@@ -67,44 +67,47 @@ create_was_service() {
 # Get tWAS installation properties
 source /datadrive/virtualimage.properties
 
-# Check whether the user is entitled or not
-while [ ! -f "$WAS_LOG_PATH" ]
-do
-    sleep 5
-done
-
-isDone=false
-while [ $isDone = false ]
-do
-    result=`(tail -n1) <$WAS_LOG_PATH`
-    if [[ $result = $ENTITLED ]] || [[ $result = $UNENTITLED ]] || [[ $result = $UNDEFINED ]]; then
-        isDone=true
-    else
-        sleep 5
-    fi
-done
-
-# Remove cloud-init artifacts and logs
-cloud-init clean --logs
-
-# Terminate the process for the un-entitled or undefined user
-if [ ${result} != $ENTITLED ]; then
-    if [ ${result} = $UNENTITLED ]; then
-        echo "The provided IBMid does not have entitlement to install WebSphere Application Server. Please contact the primary or secondary contacts for your IBM Passport Advantage site to grant you access or follow steps at IBM eCustomer Care (https://ibm.biz/IBMidEntitlement) for further assistance."
-    else
-        echo "No WebSphere Application Server installation packages were found. This is likely due to a temporary issue with the installation repository. Try again and open an IBM Support issue if the problem persists."
-    fi
-    exit 1
-fi
-
 # Check required parameters
-if [ "$2" == "" ]; then 
+if [ "$3" == "" ]; then 
   echo "Usage:"
-  echo "  ./install.sh [adminUserName] [adminPassword]"
+  echo "  ./install.sh [useTrial] [adminUserName] [adminPassword]"
   exit 1
 fi
-adminUserName=$1
-adminPassword=$2
+useTrial=$1
+adminUserName=$2
+adminPassword=$3
+
+if [ "$useTrial" = False ]; then
+    # Check whether the user is entitled or not
+    while [ ! -f "$WAS_LOG_PATH" ]
+    do
+        sleep 5
+    done
+
+    isDone=false
+    while [ $isDone = false ]
+    do
+        result=`(tail -n1) <$WAS_LOG_PATH`
+        if [[ $result = $ENTITLED ]] || [[ $result = $UNENTITLED ]] || [[ $result = $UNDEFINED ]]; then
+            isDone=true
+        else
+            sleep 5
+        fi
+    done
+
+    # Remove cloud-init artifacts and logs
+    cloud-init clean --logs
+
+    # Terminate the process for the un-entitled or undefined user
+    if [ ${result} != $ENTITLED ]; then
+        if [ ${result} = $UNENTITLED ]; then
+            echo "The provided IBM ID does not have entitlement to install WebSphere Application Server. Please contact the primary or secondary contacts for your IBM Passport Advantage site to grant you access or follow steps at IBM eCustomer Care (https://ibm.biz/IBMidEntitlement) for further assistance."
+        else
+            echo "No WebSphere Application Server installation packages were found. This is likely due to a temporary issue with the installation repository. Try again and open an IBM Support issue if the problem persists."
+        fi
+        exit 1
+    fi
+fi
 
 create_standalone_application_profile AppSrv1 $(hostname) $(hostname)Node01 "$adminUserName" "$adminPassword"
 add_admin_credentials_to_soap_client_props AppSrv1 "$adminUserName" "$adminPassword"
