@@ -271,10 +271,7 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
     }
     storageProfile: {
       imageReference: {
-        publisher: config.imagePublisher
-        offer: config.twasImageOffer
-        sku: config.twasImageSku
-        version: config.twasImageVersion
+        id: resourceId('imageTest424181336936-twasBase', 'Microsoft.Compute/images', 'vm424181336936')
       }
       osDisk: {
         name: '${name_virtualMachine}-disk'
@@ -298,11 +295,6 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
         }
       ]
     }
-  }
-  plan: {
-    name: config.twasImageSku
-    publisher: config.imagePublisher
-    product: config.twasImageOffer
   }
 }
 
