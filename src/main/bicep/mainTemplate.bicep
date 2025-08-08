@@ -73,19 +73,19 @@ param vnetForSingleServer object = {
     '10.0.0.32/28'
   ]
   addressPrefix: '10.0.0.32/28'
-  newOrExisting: 'new'
+  newOrExisting: 'existing'
   subnets: {
     subnet1: {
       name: 'twassingle-subnet'
       addressPrefix: '10.0.0.32/29'
-      startAddress: '10.0.0.36'
+      startAddress: '10.0.0.32'
     }
   }
 }
 @description('To mitigate ARM-TTK error: Control Named vnetForSingleServer must output the newOrExisting property when hideExisting is false')
-param newOrExistingVnetForSingleServer string = 'new'
+param newOrExistingVnetForSingleServer string = 'existing'
 @description('To mitigate ARM-TTK error: Control Named vnetForSingleServer must output the resourceGroup property when hideExisting is false')
-param vnetRGNameForSingleServer string = resourceGroup().name
+param vnetRGNameForSingleServer string = 'twasSingleTestRG-majguo-16818375569-286'
 
 @description('Boolean value indicating, if user wants to enable database connection.')
 param enableDB bool = false
