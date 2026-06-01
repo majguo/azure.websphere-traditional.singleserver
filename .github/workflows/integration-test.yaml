@@ -28,7 +28,7 @@ on:
         description: 'Location of the Azure resources'
         required: true
         type: string
-        default: 'eastus2'
+        default: 'westus'
       configurations_for_it:
         description: "JSON string of environment variables used for CI"
         required: false
@@ -69,7 +69,7 @@ env:
   uamiName: uami${{ github.run_id }}${{ github.run_number }}
   testResourceGroup: twasSingleTestRG-${{ github.repository_owner }}-${{ github.run_id }}-${{ github.run_number }}
   testDeploymentName: twasSingleTestDeployment-${{ github.run_id }}-${{ github.run_number }}
-  location: ${{ github.event.inputs.location || 'eastus2' }}
+  location: ${{ github.event.inputs.location || 'westus' }}
   scriptLocation: https://raw.githubusercontent.com/${{ secrets.USER_NAME }}/azure.websphere-traditional.singleserver/$GITHUB_REF_NAME/test/
 jobs:
   integration-test:
@@ -275,9 +275,12 @@ jobs:
           
           # Create a PostgreSQL Flexible Server that allows Azure services to access
           az postgres flexible-server create \
-            --resource-group ${{ env.testResourceGroup }} --name ${{ env.dbInstanceName }} --database-name testdb \
+            --resource-group ${{ env.testResourceGroup }} --name ${{ env.dbInstanceName }} \
             --admin-user testuser --admin-password ${{ env.dbPassword }} --public-access 0.0.0.0 \
             --location ${{ env.location }} --sku-name Standard_B1ms --tier Burstable
+          az postgres flexible-server db create \
+            --resource-group ${{ env.testResourceGroup }} --server-name ${{ env.dbInstanceName }} \
+            --database-name testdb
           host=$(az postgres flexible-server show \
             --resource-group ${{ env.testResourceGroup }} --name ${{ env.dbInstanceName }} \
             --query "fullyQualifiedDomainName" -o tsv)
